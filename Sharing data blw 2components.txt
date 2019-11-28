@@ -1,0 +1,178 @@
+we have 2 components .
+in 1st componet we table and 2nd component we from file 
+get the data from 2nd to 1at table.
+
+
+1)
+model :- save in ts file
+
+export class salary{
+   
+name:string;
+code:string;
+description:string;
+showSalaryComponents:string;
+action:string;
+
+    
+
+}
+2) sevices-save in ts
+
+
+import { Injectable } from '@angular/core';
+import {salary} from './model/salary-model';
+import { from } from 'rxjs';
+@Injectable({
+  providedIn: 'root'
+})
+export class SalaryServicesService {
+eissalary:salary []=[
+
+];
+getsalary():salary[]{
+  return this.eissalary;
+}
+save(salarys:salary){
+  this.eissalary.push(salarys);
+}
+  constructor() { }
+}
+ 
+
+3) 1component :-
+salary table
+  
+<!---salary.html---->
+
+<div class="container">
+
+    <div class="btun">
+            Salary Component Groups   
+            <button  style="float: right; margin-left: 10px; margin-bottom: 10px;" mat-raised-button color="primary" routerLink="/salary-group">New</button> 
+           
+      </div> 
+           
+<table class="table table-bordered " >
+
+    <tr>
+        <th scope="col"> Name</th>
+        <th scope="col"> Code</th>
+        <th scope="col">Description</th>
+        <th scope="col">Show Salary Components</th>
+        <th scope="col">Action</th>
+    </tr>
+        <tbody *ngFor="let sal of salarys">
+         <tr>
+            <td>{{sal.name}}</td>
+            <td>{{sal.code}}</td>
+            <td>{{sal.description}}</td>
+            <td> <a routerLink="/salary1">Show Components</a></td>
+            <td> <a routerLink="/salary">Edit</a></td>
+          </tr>
+        
+        </tbody>
+      </table>
+      </div> 
+
+<!---salary.css--->
+.table table-bordered{
+    margin-top: 30px;
+}
+.btun{
+    font-weight:bold;
+    margin-top:20px;
+}
+a{
+    color:#3AB1CF;
+}
+tr:hover{ background-color: #ddd8d8;}
+
+
+
+<!---salary.ts--->
+import { Component, OnInit } from '@angular/core';
+import { salary } from '../model/salary-model';
+import { SalaryServicesService } from '../salary-services.service';
+
+@Component({
+  selector: 'app-salary',
+  templateUrl: './salary.component.html',
+  styleUrls: ['./salary.component.scss']
+})
+export class SalaryComponent implements OnInit {
+salarys:salary[] =[];
+
+  constructor(private _salaryServiceService:SalaryServicesService) { }
+
+  ngOnInit() {
+    this.salarys=this._salaryServiceService.getsalary();
+    }
+  
+
+}
+
+
+2) salary from filed 
+<!---html--->
+
+<div class="container-fluid">
+    <h4> Add/Edit Salary Component Group </h4>
+<p>
+<mat-form-field appearance="outline">
+ <mat-label>Name</mat-label>
+ <input matInput placeholder="Name" id="name" [(ngModel)]="salarys.name" name="name">
+</mat-form-field>
+</p>
+<p>
+<mat-form-field appearance="outline">
+ <mat-label>Code</mat-label>
+ <input matInput placeholder="Code" id="code" [(ngModel)]="salarys.code" name="code">
+</mat-form-field>
+</p>
+<p>
+<mat-form-field appearance="outline">
+ <mat-label>Description</mat-label>
+ <input matInput placeholder="Description" id="description"  [(ngModel)]="salarys.description" name="description">
+</mat-form-field>
+</p>
+<button mat-raised-button color="primary" (click)="saveSalary()">Submit</button> &nbsp;  &nbsp;
+<button mat-stroked-button>Cancel</button>
+</div>
+
+
+
+<!----  ts ----->
+import { Component, OnInit } from '@angular/core';
+import {salary} from '../model/salary-model';
+import { from } from 'rxjs';
+import { SalaryServicesService } from '../salary-services.service';
+import { Router } from '@angular/router';
+@Component({
+  selector: 'app-salary-group',
+  templateUrl: './salary-group.component.html',
+  styleUrls: ['./salary-group.component.scss']
+})
+export class SalaryGroupComponent implements OnInit {
+ salarys:salary ={
+   name:null,
+   code:null,
+   description:null,
+   showSalaryComponents:null,
+   action:null
+
+ }
+  constructor(private _salaryServicesService:SalaryServicesService, private _router:Router ) {}
+
+    saveSalary():void{
+      this._salaryServicesService.save(this.salarys);
+      this._router.navigate(['salary']);
+      console.log(this.salarys);
+    }
+   
+
+  ngOnInit() {
+  }
+
+}
+
